@@ -2,14 +2,12 @@
  * App 通信交互
  *
  * @Creator Ryu
- * @version 1.0.0
+ * @version 1.1
  * @createTime 2018/3/21 16:13:47
  *
  * 自定义协议：scheme://web.app?{cmd:Number(Number:命令号，必填),jsonStr:String(参数，可选),callback:String(回调函数名，可选)}
  *
  */
-
-
 (function() {
     var mobileCall = {
         /* 定义scheme */
@@ -49,9 +47,9 @@
                 iframe = document.getElementById('ifr' + id);
 
             if (!iframe) {
-                iframe = document.createElement("iframe");
+                iframe = document.createElement('iframe');
                 iframe.id = 'ifr' + id;
-                iframe.style.cssText = "display:none;width:0px;height:0px;";
+                iframe.style.cssText = 'display:none;width:0px;height:0px;';
                 document.body.appendChild(iframe);
             }
 
@@ -61,6 +59,7 @@
         /* 此时相对路径已经变成绝对路径 ie7+ */
         getAbsoluteUrl : function(url) {
             var a = document.createElement('a');
+
             a.href = url;
             url = a.href;
             return url;
@@ -77,11 +76,14 @@
         callCmd: function(o) {
             var me = this,
                 dc = document,
-                cbName, jsonStr, schemel_url = me.protocol;
+                cbName,
+                jsonStr,
+                schemel_url = me.protocol;
 
             /* 创建随机函数 */
             me.cbNum++;
 
+            /* 随机生成回调函数名 */
             cbName = me.prefixCall + me.cbNum + Math.random().toString().substr(2, 9);
 
             if (o.callback) {
@@ -143,5 +145,16 @@
     };
 
     /* 暴露方法 */
-    window.mCall = mobileCall;
-})();
+    if (typeof define === 'function' && define.amd) {
+        define(function() {
+            return mobileCall;
+        });
+    } else if (typeof module === 'object' && module && typeof module.exports === 'object' && module.exports) {
+        module.exports = mobileCall;
+    } else {
+        window.mobileCall = mobileCall;
+    }
+
+})(function() {
+    return this || window;
+}());
